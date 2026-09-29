@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>JalRevive AI | Live Tribal Spring Intelligence</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<link rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
+
+<style>
+
+:root{
+    --forest:#073b32;
+    --forest2:#0a5144;
+    --green:#0e8f70;
+    --mint:#a9ead6;
+    --light:#edf7f4;
+    --text:#183b35;
+    --muted:#71847f;
+    --line:#dcebe6;
+    --blue:#2484d8;
+    --orange:#f59e0b;
+    --red:#dc4545;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+    background:var(--light);
+    color:var(--text);
+}
+
+/* SIDEBAR */
+
+.sidebar{
+    position:fixed;
+    left:0;
+    top:0;
+    width:250px;
+    height:100vh;
+    background:var(--forest);
+    color:white;
+    padding:25px 18px;
+    z-index:2000;
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:5px 8px 25px;
+    border-bottom:1px solid rgba(255,255,255,.15);
+}
+
+.brand-mark{
+    width:45px;
+    height:45px;
+    border-radius:12px;
+    background:var(--green);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:22px;
+}
+
+.brand h1{
+    font-size:20px;
+}
+
+.brand p{
+    font-size:9px;
+    color:#a9c8c0;
+    margin-top:4px;
+}
+
+.menu{
+    margin-top:20px;
+}
+
+.menu-title{
+    font-size:10px;
+    color:#8fb4aa;
+    margin:15px 10px 8px;
+    text-transform:uppercase;
+}
+
+.menu button{
+    width:100%;
+    border:0;
+    background:transparent;
+    color:#d5e7e2;
+    padding:12px 13px;
+    margin:3px 0;
+    border-radius:10px;
+    display:flex;
+    align-items:center;
+    gap:13px;
+    cursor:pointer;
+    text-align:left;
+    font-size:14px;
+}
+
+.menu button.active,
+.menu button:hover{
+    background:var(--forest2);
+    color:white;
+}
+
+/* MAIN */
+
+.main{
+    margin-left:250px;
+    min-height:100vh;
+}
+
+/* TOP BAR */
+
+.topbar{
+    height:70px;
+    background:white;
+    border-bottom:1px solid var(--line);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 35px;
+    position:sticky;
+    top:0;
+    z-index:900;
+}
+
+.topbar-title{
+    font-weight:bold;
+    font-size:16px;
+}
+
+.status{
+    color:var(--green);
+    font-size:13px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.status-dot{
+    width:9px;
+    height:9px;
+    border-radius:50%;
+    background:#18b985;
+    box-shadow:0 0 8px #18b985;
+}
+
+/* PAGE */
+
+.page{
+    padding:35px;
+}
+
+/* HERO */
+
+.hero{
+    background:linear-gradient(
+        135deg,
+        var(--forest),
+        var(--forest2)
+    );
+    border-radius:22px;
+    padding:45px;
+    color:white;
+    display:grid;
+    grid-template-columns:1.5fr 1fr;
+    gap:30px;
+}
+
+.hero-tag{
+    color:var(--mint);
+    font-size:12px;
+    margin-bottom:14px;
+}
+
+.hero h2{
+    font-size:43px;
+    line-height:1.1;
+    margin-bottom:18px;
+}
+
+.hero p{
+    color:#c8ddd8;
+    line-height:1.7;
+}
+
+.hero-box{
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.15);
+    border-radius:18px;
+    padding:22px;
+}
+
+.hero-box label{
+    font-size:12px;
+    color:#b8d5ce;
+}
+
+.select{
+    width:100%;
+    padding:13px;
+    border:1px solid var(--line);
+    border-radius:10px;
+    margin-top:8px;
+    background:white;
+    color:var(--text);
+}
+
+/* BUTTON */
+
+.primary-btn{
+    width:100%;
+    border:0;
+    background:var(--green);
+    color:white;
+    padding:14px 18px;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:bold;
+    margin-top:14px;
+    font-size:14px;
+}
+
+.primary-btn:hover{
+    opacity:.9;
+}
+
+/* GPS STATUS */
+
+.gps-status{
+    margin-top:12px;
+    padding:11px;
+    border-radius:9px;
+    background:rgba(0,0,0,.15);
+    color:#d5ebe5;
+    font-size:12px;
+    text-align:center;
+}
+
+.gps-status.live{
+    color:#8ff0ce;
+}
+
+.gps-status.error{
+    color:#ffb3b3;
+}
+
+/* STATS */
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:18px;
+    margin:25px 0;
+}
+
+.stat-card{
+    background:white;
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:22px;
+}
+
+.stat-card i{
+    font-size:22px;
+    color:var(--green);
+    margin-bottom:15px;
+}
+
+.stat-number{
+    font-size:27px;
+    font-weight:bold;
+}
+
+.stat-label{
+    font-size:12px;
+    color:var(--muted);
+    margin-top:5px;
+}
+
+/* MAP */
+
+.map-section{
+    background:white;
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:18px;
+}
+
+.map-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+    flex-wrap:wrap;
+    margin-bottom:15px;
+}
+
+.map-header h3{
+    font-size:17px;
+}
+
+.map-tools{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+}
+
+.map-tool{
+    border:1px solid var(--line);
+    background:#f6fbf9;
+    color:var(--text);
+    padding:8px 14px;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.map-tool.active{
+    background:var(--forest);
+    color:white;
+}
+
+.map{
+    height:500px;
+    width:100%;
+    border-radius:14px;
+    overflow:hidden;
+}
+
+/* GPS MARKER */
+
+.live-location-marker{
+    width:20px;
+    height:20px;
+    border-radius:50%;
+    background:#2484d8;
+    border:4px solid white;
+    box-shadow:
+        0 0 0 5px rgba(36,132,216,.25),
+        0 0 18px rgba(36,132,216,.8);
+}
+
+.gps-pulse{
+    animation:pulse 1.8s infinite;
+}
+
+@keyframes pulse{
+
+    0%{
+        box-shadow:
+        0 0 0 0 rgba(36,132,216,.7),
+        0 0 18px rgba(36,132,216,.8);
+    }
+
+    70%{
+        box-shadow:
+        0 0 0 20px rgba(36,132,216,0),
+        0 0 18px rgba(36,132,216,.5);
+    }
+
+    100%{
+        box-shadow:
+        0 0 0 0 rgba(36,132,216,0),
+        0 0 18px rgba(36,132,216,.8);
+    }
+
+}
+
+/* LOCATION INFO */
+
+.location-info{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+    margin-top:14px;
+}
+
+.location-box{
+    background:#f6fbf9;
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:12px;
+}
+
+.location-box small{
+    display:block;
+    font-size:10px;
+    color:var(--muted);
+    margin-bottom:4px;
+}
+
+.location-box strong{
+    font-size:13px;
+}
+
+/* LEGEND */
+
+.legend{
+    display:flex;
+    gap:16px;
+    flex-wrap:wrap;
+    margin-top:12px;
+    font-size:12px;
+    color:var(--muted);
+}
+
+.legend-item{
+    display:flex;
+    align-items:center;
+    gap:6px;
+}
+
+.legend-dot{
+    width:12px;
+    height:12px;
+    border-radius:50%;
+}
+
+/* MOBILE */
+
+@media(max-width:1024px){
+
+    .sidebar{
+        width:220px;
+    }
+
+    .main{
+        margin-left:220px;
+    }
+
+    .hero{
+        grid-template-columns:1fr;
+    }
+
+    .stats{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+}
+
+@media(max-width:768px){
+
+    .sidebar{
+        display:none;
+    }
+
+    .main{
+        margin-left:0;
+    }
+
+    .topbar{
+        padding:0 15px;
+    }
+
+    .page{
+        padding:15px;
+    }
+
+    .hero{
+        padding:25px 18px;
+    }
+
+    .hero h2{
+        font-size:28px;
+    }
+
+    .stats{
+        grid-template-columns:1fr 1fr;
+        gap:10px;
+    }
+
+    .map{
+        height:380px;
+    }
+
+    .location-info{
+        grid-template-columns:1fr;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+
+<!-- =========================
+     SIDEBAR
+========================= -->
+
+<div class="sidebar">
+
+    <div class="brand">
+
+        <div class="brand-mark">
+            <i class="fa-solid fa-droplet"></i>
+        </div>
+
+        <div>
+            <h1>JalRevive AI</h1>
+            <p>TRIBAL SPRING MONITOR</p>
+        </div>
+
+    </div>
+
+
+    <div class="menu">
+
+        <div class="menu-title">
+            Main Portal
+        </div>
+
+        <button class="active">
+            <i class="fa-solid fa-satellite"></i>
+            Satellite & Springs
+        </button>
+
+        <button>
+            <i class="fa-solid fa-cloud-sun-rain"></i>
+            Live Weather
+        </button>
+
+        <button>
+            <i class="fa-solid fa-chart-line"></i>
+            Discharge Analytics
+        </button>
+
+        <button>
+            <i class="fa-solid fa-shield-halved"></i>
+            Tribal Catchments
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     MAIN
+========================= -->
+
+<div class="main">
+
+
+    <!-- TOP BAR -->
+
+    <div class="topbar">
+
+        <div class="topbar-title">
+            Live GIS Spring Intelligence Hub
+        </div>
+
+        <div class="status">
+
+            <span class="status-dot"></span>
+
+            Satellite Stream Live
+
+        </div>
+
+    </div>
+
+
+    <div class="page">
+
+
+        <!-- HERO -->
+
+        <div class="hero">
+
+            <div>
+
+                <div class="hero-tag">
+
+                    <i class="fa-solid fa-bolt"></i>
+
+                    HIGH RESOLUTION SATELLITE TRACKING
+
+                </div>
+
+
+                <h2>
+                    Monitoring Tribal Spring Catchments
+                </h2>
+
+
+                <p>
+                    Real-time multispectral imagery layer for
+                    analyzing water table discharge, catchment
+                    vegetation index, and aquifer revival zones
+                    across India.
+                </p>
+
+            </div>
+
+
+            <!-- GPS BOX -->
+
+            <div class="hero-box">
+
+                <label>
+                    Focus Catchment Zone
+                </label>
+
+
+                <select
+                    class="select"
+                    id="regionSelector"
+                    onchange="jumpToRegion(this.value)"
+                >
+
+                    <option value="araku">
+                        Araku Valley (Andhra Pradesh)
+                    </option>
+
+                    <option value="dindori">
+                        Dindori Tribal Belt (Madhya Pradesh)
+                    </option>
+
+                    <option value="kinnaur">
+                        Kinnaur Mountain Springs (Himachal)
+                    </option>
+
+                    <option value="mayurbhanj">
+                        Mayurbhanj Similipal (Odisha)
+                    </option>
+
+                </select>
+
+
+                <!-- LIVE GPS BUTTON -->
+
+                <button
+                    class="primary-btn"
+                    id="locationButton"
+                    onclick="startLiveLocation()"
+                >
+
+                    <i class="fa-solid fa-location-crosshairs"></i>
+
+                    LIVE LOCATION
+
+                </button>
+
+
+                <!-- GPS STATUS -->
+
+                <div
+                    class="gps-status"
+                    id="gpsStatus"
+                >
+
+                    <i class="fa-solid fa-satellite-dish"></i>
+
+                    Starting Live GPS...
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- STATS -->
+
+        <div class="stats">
+
+            <div class="stat-card">
+
+                <i class="fa-solid fa-water"></i>
+
+                <div class="stat-number">
+                    4,281
+                </div>
+
+                <div class="stat-label">
+                    Mapped Springs
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <i class="fa-solid fa-layer-group"></i>
+
+                <div class="stat-number">
+                    Esri 4K
+                </div>
+
+                <div class="stat-label">
+                    Satellite Imagery
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <i class="fa-solid fa-gauge-high"></i>
+
+                <div class="stat-number">
+                    74.2%
+                </div>
+
+                <div class="stat-label">
+                    Average Rejuvenation
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <i class="fa-solid fa-tree"></i>
+
+                <div class="stat-number">
+                    88.5%
+                </div>
+
+                <div class="stat-label">
+                    Catchment Canopy Index
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- MAP -->
+
+        <div class="map-section">
+
+            <div class="map-header">
+
+                <div>
+
+                    <h3>
+
+                        <i class="fa-solid fa-earth-asia"></i>
+
+                        High-Resolution Satellite Map
+
+                    </h3>
+
+                    <span
+                        style="
+                        font-size:12px;
+                        color:var(--muted);
+                        "
+                    >
+
+                        Live GIS monitoring with GPS location
+
+                    </span>
+
+                </div>
+
+
+                <div class="map-tools">
+
+                    <button
+                        class="map-tool active"
+                        id="btnSat"
+                        onclick="switchMapLayer('sat')"
+                    >
+
+                        <i class="fa-solid fa-satellite"></i>
+
+                        Satellite
+
+                    </button>
+
+
+                    <button
+                        class="map-tool"
+                        id="btnTerrain"
+                        onclick="switchMapLayer('terrain')"
+                    >
+
+                        <i class="fa-solid fa-mountain"></i>
+
+                        Terrain
+
+                    </button>
+
+
+                    <button
+                        class="map-tool"
+                        id="btnStreet"
+                        onclick="switchMapLayer('street')"
+                    >
+
+                        <i class="fa-solid fa-map"></i>
+
+                        Street
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="satelliteMap"
+                class="map"
+            ></div>
+
+
+            <!-- LIVE COORDINATES -->
+
+            <div class="location-info">
+
+                <div class="location-box">
+
+                    <small>
+                        LIVE LATITUDE
+                    </small>
+
+                    <strong id="latitude">
+                        Waiting for GPS...
+                    </strong>
+
+                </div>
+
+
+                <div class="location-box">
+
+                    <small>
+                        LIVE LONGITUDE
+                    </small>
+
+                    <strong id="longitude">
+                        Waiting for GPS...
+                    </strong>
+
+                </div>
+
+
+                <div class="location-box">
+
+                    <small>
+                        GPS ACCURACY
+                    </small>
+
+                    <strong id="accuracy">
+                        Waiting for GPS...
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- LEGEND -->
+
+            <div class="legend">
+
+                <div class="legend-item">
+
+                    <span
+                        class="legend-dot"
+                        style="background:#10b981"
+                    ></span>
+
+                    Active Spring
+
+                </div>
+
+
+                <div class="legend-item">
+
+                    <span
+                        class="legend-dot"
+                        style="background:#f59e0b"
+                    ></span>
+
+                    Depleting Water Table
+
+                </div>
+
+
+                <div class="legend-item">
+
+                    <span
+                        class="legend-dot"
+                        style="background:#ef4444"
+                    ></span>
+
+                    Critical Priority
+
+                </div>
+
+
+                <div class="legend-item">
+
+                    <span
+                        class="legend-dot"
+                        style="background:#2484d8"
+                    ></span>
+
+                    Your Live Location
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- LEAFLET -->
+
+<script
+src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"
+></script>
+
+
+<script>
+
+/* ==========================================
+   GLOBAL VARIABLES
+========================================== */
+
+let map;
+
+let baseLayers = {};
+
+let currentLayer = "sat";
+
+let labelsOverlay;
+
+let liveLocationMarker = null;
+
+let liveAccuracyCircle = null;
+
+let watchId = null;
+
+
+/* ==========================================
+   INITIALIZE MAP
+========================================== */
+
+function initMap(){
+
+    map = L.map("satelliteMap",{
+
+        center:[
+            18.3273,
+            82.8775
+        ],
+
+        zoom:12,
+
+        zoomControl:true,
+
+        scrollWheelZoom:true
+
+    });
+
+
+    /* SATELLITE */
+
+    baseLayers.sat =
+        L.tileLayer(
+            "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+            {
+                attribution:"Tiles © Esri",
+                maxZoom:19
+            }
+        );
+
+
+    /* LABELS */
+
+    labelsOverlay =
+        L.tileLayer(
+            "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+            {
+                attribution:"Labels © Esri",
+                maxZoom:19
+            }
+        );
+
+
+    /* TERRAIN */
+
+    baseLayers.terrain =
+        L.tileLayer(
+            "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
+            {
+                attribution:"© OpenStreetMap contributors | OpenTopoMap",
+                maxZoom:17
+            }
+        );
+
+
+    /* STREET */
+
+    baseLayers.street =
+        L.tileLayer(
+            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            {
+                attribution:"© OpenStreetMap contributors",
+                maxZoom:19
+            }
+        );
+
+
+    baseLayers.sat.addTo(map);
+
+    labelsOverlay.addTo(map);
+
+
+    /* SAMPLE SPRINGS */
+
+    const springs = [
+
+        {
+            name:"Padmapuram Sacred Spring",
+            coords:[18.3335,82.8720],
+            status:"Active - 65 LPM",
+            color:"#10b981"
+        },
+
+        {
+            name:"Dumbriguda Catchment Point",
+            coords:[18.2810,82.8520],
+            status:"Depleting - 12 LPM",
+            color:"#f59e0b"
+        },
+
+        {
+            name:"Chaparai Stream Origin",
+            coords:[18.2980,82.9150],
+            status:"Critical - Requires Trenches",
+            color:"#ef4444"
+        }
+
+    ];
+
+
+    springs.forEach(function(s){
+
+        L.circleMarker(
+            s.coords,
+            {
+                radius:8,
+                fillColor:s.color,
+                color:"#ffffff",
+                weight:2,
+                fillOpacity:.9
+            }
+        )
+        .addTo(map)
+        .bindPopup(`
+            <div style="font-family:Arial;padding:5px;">
+
+                <b style="color:#073b32;">
+                    ${s.name}
+                </b>
+
+                <br><br>
+
+                Status:
+                <b>${s.status}</b>
+
+            </div>
+        `);
+
+    });
+
+}
+
+
+/* ==========================================
+   MAP LAYER SWITCH
+========================================== */
+
+function switchMapLayer(layer){
+
+    document
+        .querySelectorAll(".map-tool")
+        .forEach(function(btn){
+
+            btn.classList.remove("active");
+
+        });
+
+
+    if(
+        baseLayers[currentLayer] &&
+        map.hasLayer(baseLayers[currentLayer])
+    ){
+
+        map.removeLayer(
+            baseLayers[currentLayer]
+        );
+
+    }
+
+
+    if(layer === "sat"){
+
+        baseLayers.sat.addTo(map);
+
+        if(!map.hasLayer(labelsOverlay)){
+            labelsOverlay.addTo(map);
+        }
+
+        document
+            .getElementById("btnSat")
+            .classList.add("active");
+
+    }
+
+
+    if(layer === "terrain"){
+
+        if(map.hasLayer(labelsOverlay)){
+            map.removeLayer(labelsOverlay);
+        }
+
+        baseLayers.terrain.addTo(map);
+
+        document
+            .getElementById("btnTerrain")
+            .classList.add("active");
